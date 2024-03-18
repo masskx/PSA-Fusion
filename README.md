@@ -1,4 +1,10 @@
-## AFGAN
+# PSA-Fsion:Cross-Modal Attention Fusion of Infrared and Visible Light Images using Pre-trained Siamese Networks
+
+![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=PyTorch&logoColor=white)
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+
+
+<hr/>
 
 **这是一种新药，官方暂时命名为K2**
 
