@@ -55,7 +55,7 @@ loss_fn = torch.nn.MSELoss()
 D_loss = []
 G_loss = []
 res = []
-for epoch in range(199 * 19):
+for epoch in range(199 * 20):
     train_D_epoch_loss = 0
     train_G_epoch_loss = 0
 

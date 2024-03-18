@@ -8,8 +8,8 @@ class Generator(nn.Module):
     def __init__(self):
         super(Generator, self).__init__()
         self.ae = Autoencoder()
-        self.fft = FourierTransformLayer()
-        self.edge = EdgeDetectionLayer()
+        # self.fft = FourierTransformLayer()
+        # self.edge = EdgeDetectionLayer()
 
     def forward(self, vi, ir):
         # f_vi = self.fft(vi)  # [b,1,256,256]可见光的频谱信息

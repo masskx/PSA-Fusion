@@ -1,6 +1,5 @@
 import numpy as np
 import os
-import cv2
 from matplotlib import pyplot as plt
 from natsort import natsorted
 from tqdm import tqdm
