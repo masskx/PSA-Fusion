@@ -40,17 +40,17 @@ class Autoencoder(nn.Module):
             sm_dim = 192,            # high res dimension
             sm_patch_size = 16,      # high res patch size (should be smaller than lg_patch_size)
             sm_enc_depth = 2,        # high res depth
-            sm_enc_heads = 8,        # high res heads
+            sm_enc_heads = 4,        # high res heads
             sm_enc_mlp_dim = 2048,   # high res feedforward dimension
             #########################################
             lg_dim = 192,            # low res dimension
             lg_patch_size = 16,      # low res patch size
             lg_enc_depth = 2,        # low res depth
-            lg_enc_heads = 8,        # low res heads
+            lg_enc_heads = 4,        # low res heads
             lg_enc_mlp_dim = 2048,   # low res feedforward dimensions
 
             cross_attn_depth = 2,    # cross attention rounds
-            cross_attn_heads = 8,    # cross attention heads
+            cross_attn_heads = 4,    # cross attention heads
             dropout = 0.1,
             emb_dropout = 0.1
         )

@@ -29,9 +29,9 @@ test_viimgs_path = glob.glob('/ML/Mashuai/GAN/AFGAN/dataset/test/MSRS/vi/*.png')
 train_ds = FusionDataset(train_irimgs_path, train_viimgs_path)
 test_ds = FusionDataset(test_irimgs_path, test_viimgs_path)
 
-BATCHSIZE = 64
-LAMDA = 7
-epsilon = 5.0
+BATCHSIZE = 32
+LAMDA = 100
+epsilon = 8.0
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 # 训练集随机打乱
 train_dl = data.DataLoader(dataset=train_ds,
@@ -90,8 +90,8 @@ for epoch in range(199 * 20):
         # vi_gen_loss_crossentropyloss = loss_fn(vi_disc_gen_out, torch.ones_like(vi_disc_gen_out, device=device))
         vi_gen_loss_crossentropyloss = torch.mean(torch.square(gen_output - torch.Tensor(gen_output.shape).uniform_(0.7, 1.2).to(device)))
 
-        front = torch.mean(torch.square(gen_output - 0.5*vi - 0.5*ir))
-        back = torch.mean(torch.square(gradient(gen_output) -0.5 * gradient(vi) -0.5 * gradient(vi)))
+        front = torch.mean(torch.square(gen_output - vi ))
+        back = torch.mean(torch.square(gradient(gen_output) -gradient(vi) - gradient(vi)))
         # original
 
         # front = torch.mean(torch.square(gen_output - ir))
