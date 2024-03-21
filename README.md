@@ -9,7 +9,11 @@
 
 这里应该有一张模型结构图，但是我没画好
 <hr/>
+
 **这是一种新药，官方暂时命名为K2**
+
+<img src="img/siamese.png">
+
 
 **If you want use this code and you can download dataset from here [Image Fusion Dataset](www.baidu.com).**
 
