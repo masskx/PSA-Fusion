@@ -11,12 +11,12 @@ class Autoencoder(nn.Module):
     def __init__(self):
         super(Autoencoder, self).__init__()
         # Define the encoder
-        # self.encoder = Encoder()  # empty encoder
-        model = Siamese()  # pre-train encoder
-        model.load_state_dict(torch.load("/ML/Mashuai/GAN/AFGAN/Sia_model_checkpoint.pth"), strict=False)
-        # for param in model.parameters():  # freeze
-        #     param.requires_grad = False
-        self.encoder = model.encoder
+        self.encoder = Encoder()  # empty encoder
+        # model = Siamese()  # pre-train encoder
+        # model.load_state_dict(torch.load("/ML/Mashuai/GAN/AFGAN/Sia_model_checkpoint.pth"), strict=False)
+        # # for param in model.parameters():  # freeze
+        # #     param.requires_grad = False
+        # self.encoder = model.encoder
 
         # Define the decoder
         self.vit = ViT(
@@ -34,7 +34,7 @@ class Autoencoder(nn.Module):
         )
         self.cross_vit = CrossViT(
             image_size = 256,
-            num_classes = 512 * 16 * 16,
+            num_classes = 512 * 4 * 4,
             depth = 4,               # number of multi-scale encoding blocks
             # use same encoder
             sm_dim = 192,            # high res dimension
@@ -64,14 +64,16 @@ class Autoencoder(nn.Module):
         # print(f'初始图像：{x.shape}')
         x1 = self.encoder(vi)
         x2 = self.encoder(ir)
-        # print(f'编码器图像：{x.shape}')
+        # print(f'1编码器图像：{x1.shape}')
+        # print(f'2编码器图像：{x2.shape}')
         # 将编码器和注意力机制的东西融合
-        x = self.decoder(x1 + x2 + vit_x.view(-1, 512, 16, 16))
+        x = self.decoder(x1 + x2 + vit_x.view(-1, 512, 4, 4))
+        # x = self.decoder(x1 + x2 )
         # print(f'解码器图像：{x.shape}')
         return x
 
 # cc = Autoencoder()
-#
+# #
 # ins1 = torch.randn(32, 1, 256, 256)
 # ins2 = torch.randn(32, 1, 256, 256)
 # output = cc(ins1,ins2)

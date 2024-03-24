@@ -88,6 +88,10 @@ class Encoder(nn.Module):
             nn.ReLU(True),
             nn.Conv2d(128, 256, 3, stride=2, padding=1),
             nn.ReLU(True),
+            nn.Conv2d(256, 256, 3, stride=2, padding=1),
+            nn.ReLU(True),
+            nn.Conv2d(256, 256, 3, stride=2, padding=1),
+            nn.ReLU(True),
             nn.Conv2d(256, 512, 3, stride=2, padding=1),
             nn.ReLU(True)
         )
@@ -101,6 +105,10 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
         self.decoder = nn.Sequential(
             nn.ConvTranspose2d(512, 256, 4, stride=2, padding=1),
+            nn.ReLU(True),
+            nn.ConvTranspose2d(256, 256, 4, stride=2, padding=1),
+            nn.ReLU(True),
+            nn.ConvTranspose2d(256, 256, 4, stride=2, padding=1),
             nn.ReLU(True),
             nn.ConvTranspose2d(256, 128, 4, stride=2, padding=1),
             nn.ReLU(True),

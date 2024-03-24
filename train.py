@@ -23,8 +23,8 @@ random.seed(seed)
 train_irimgs_path = glob.glob('/ML/Mashuai/GAN/AFGAN/dataset/train/ir/*.png')
 train_viimgs_path = glob.glob('/ML/Mashuai/GAN/AFGAN/dataset/train/vi/*.png')
 
-test_irimgs_path = glob.glob('/ML/Mashuai/GAN/AFGAN/dataset/test/MSRS/ir/*.png')
-test_viimgs_path = glob.glob('/ML/Mashuai/GAN/AFGAN/dataset/test/MSRS/vi/*.png')
+test_irimgs_path = glob.glob('/ML/Mashuai/GAN/AFGAN/dataset/test/TNO/ir/*.png')
+test_viimgs_path = glob.glob('/ML/Mashuai/GAN/AFGAN/dataset/test/TNO/vi/*.png')
 
 train_ds = FusionDataset(train_irimgs_path, train_viimgs_path)
 test_ds = FusionDataset(test_irimgs_path, test_viimgs_path)
@@ -72,12 +72,17 @@ for epoch in range(199 * 20):
         d_optimizer.zero_grad()
         # 输入真实图片，判别器判定为真
         disc_real_output = dis(vi)  # 输入真实的图片
-        d_real_loss = loss_fn(disc_real_output, torch.ones_like(disc_real_output, device=device))
+        # d_real_loss = loss_fn(disc_real_output, torch.ones_like(disc_real_output, device=device))
+
+        d_real_loss = loss_fn(disc_real_output, torch.Tensor(disc_real_output.shape).uniform_(0.7, 1.2).to(device))
+
         d_real_loss.backward()  # 反向传播
         # 生成图片
         gen_output = gen(vi, ir)  # 生成图片
         vi_disc_gen_output = dis(gen_output.detach())  # 输入生成图像，判断可见光
-        vi_d_fake_loss = loss_fn(vi_disc_gen_output, torch.zeros_like(vi_disc_gen_output, device=device))
+        # vi_d_fake_loss = loss_fn(vi_disc_gen_output, torch.zeros_like(vi_disc_gen_output, device=device))
+        vi_d_fake_loss = loss_fn(vi_disc_gen_output, torch.Tensor(vi_disc_gen_output.shape).uniform_(0, 0.3).to(device))
+
         vi_d_fake_loss.backward()  # 生成图片进入判别器进行反向传播
         # 判定器的loss由两部分组成
         disc_loss = d_real_loss + vi_d_fake_loss
@@ -88,12 +93,12 @@ for epoch in range(199 * 20):
         vi_disc_gen_out = dis(gen_output.detach())
         # 得到生成器的损失
         # vi_gen_loss_crossentropyloss = loss_fn(vi_disc_gen_out, torch.ones_like(vi_disc_gen_out, device=device))
-        vi_gen_loss_crossentropyloss = torch.mean(torch.square(gen_output - torch.Tensor(gen_output.shape).uniform_(0.7, 1.2).to(device)))
+        vi_gen_loss_crossentropyloss = torch.mean(
+            torch.square(gen_output - torch.Tensor(gen_output.shape).uniform_(0.7, 1.2).to(device)))
 
-        front = torch.mean(torch.square(gen_output - vi ))
-        back = torch.mean(torch.square(gradient(gen_output) -gradient(vi) - gradient(vi)))
+        front = torch.mean(torch.square(gen_output - vi))
+        back = torch.mean(torch.square(gradient(gen_output) - gradient(ir) - gradient(vi)))
         # original
-
         # front = torch.mean(torch.square(gen_output - ir))
         # back = torch.mean(torch.square(gradient(gen_output) - gradient(vi)))
 
@@ -128,7 +133,7 @@ for epoch in range(199 * 20):
             f'train_D_epoch_loss:{train_D_epoch_loss},front:{train_front},back:{train_back},lc:{train_lc},ld:{train_ld},train_G_epoch_loss:{train_G_epoch_loss}')
     # 开始测试
     if epoch % 399 == 0:
-        # 每49轮来一次
+        # 每399轮来一次
         print("测试一波")
         gen.eval()
         for step, (vi, ir) in enumerate(test_dl):
@@ -136,7 +141,8 @@ for epoch in range(199 * 20):
             ir = ir.to(device)
             vi = vi.to(device)
             fusion_img = gen(vi, ir)  # 生成图片
-            torch.save(gen.state_dict(), 'Notrans_and_Sia_model_checkpoint' + (str)(epoch) + '.pth')
+            # 保存模型结果
+            torch.save(gen.state_dict(), 'Cross' + (str)(epoch) + '.pth')
             # 得到每个batch的数据之后对每个batch进行计算指标
             # 这里我觉得应该输出每个轮次的平均值
             save_images_from_tensors(ir, vi, fusion_img, epoch)
