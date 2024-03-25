@@ -72,16 +72,16 @@ for epoch in range(199 * 20):
         d_optimizer.zero_grad()
         # 输入真实图片，判别器判定为真
         disc_real_output = dis(vi)  # 输入真实的图片
-        # d_real_loss = loss_fn(disc_real_output, torch.ones_like(disc_real_output, device=device))
+        d_real_loss = loss_fn(disc_real_output, torch.ones_like(disc_real_output, device=device))
 
-        d_real_loss = loss_fn(disc_real_output, torch.Tensor(disc_real_output.shape).uniform_(0.7, 1.2).to(device))
+        # d_real_loss = loss_fn(disc_real_output, torch.Tensor(disc_real_output.shape).uniform_(0.7, 1.2).to(device))
 
         d_real_loss.backward()  # 反向传播
         # 生成图片
         gen_output = gen(vi, ir)  # 生成图片
         vi_disc_gen_output = dis(gen_output.detach())  # 输入生成图像，判断可见光
-        # vi_d_fake_loss = loss_fn(vi_disc_gen_output, torch.zeros_like(vi_disc_gen_output, device=device))
-        vi_d_fake_loss = loss_fn(vi_disc_gen_output, torch.Tensor(vi_disc_gen_output.shape).uniform_(0, 0.3).to(device))
+        vi_d_fake_loss = loss_fn(vi_disc_gen_output, torch.zeros_like(vi_disc_gen_output, device=device))
+        # vi_d_fake_loss = loss_fn(vi_disc_gen_output, torch.Tensor(vi_disc_gen_output.shape).uniform_(0, 0.3).to(device))
 
         vi_d_fake_loss.backward()  # 生成图片进入判别器进行反向传播
         # 判定器的loss由两部分组成
@@ -92,11 +92,11 @@ for epoch in range(199 * 20):
         # 将生成的图片放入判别器，要求骗过判别器
         vi_disc_gen_out = dis(gen_output.detach())
         # 得到生成器的损失
-        # vi_gen_loss_crossentropyloss = loss_fn(vi_disc_gen_out, torch.ones_like(vi_disc_gen_out, device=device))
-        vi_gen_loss_crossentropyloss = torch.mean(
-            torch.square(gen_output - torch.Tensor(gen_output.shape).uniform_(0.7, 1.2).to(device)))
+        vi_gen_loss_crossentropyloss = loss_fn(vi_disc_gen_out, torch.ones_like(vi_disc_gen_out, device=device))
+        # vi_gen_loss_crossentropyloss = torch.mean(
+            # torch.square(gen_output - torch.Tensor(gen_output.shape).uniform_(0.7, 1.2).to(device)))
 
-        front = torch.mean(torch.square(gen_output - vi))
+        front = torch.mean(torch.square(gen_output - vi ))
         back = torch.mean(torch.square(gradient(gen_output) - gradient(ir) - gradient(vi)))
         # original
         # front = torch.mean(torch.square(gen_output - ir))
