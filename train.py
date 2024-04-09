@@ -30,15 +30,15 @@ train_ds = FusionDataset(train_irimgs_path, train_viimgs_path)
 test_ds = FusionDataset(test_irimgs_path, test_viimgs_path)
 
 BATCHSIZE = 32
-LAMDA = 100
-epsilon = 8.0
+LAMDA = 7
+epsilon = 5
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 # 训练集随机打乱
 train_dl = data.DataLoader(dataset=train_ds,
                            batch_size=BATCHSIZE,
                            shuffle=True)
 test_dl = data.DataLoader(dataset=test_ds,
-                          batch_size=BATCHSIZE,
+                          batch_size=64,
                           shuffle=False)
 
 gen = Generator().to(device)
@@ -94,13 +94,15 @@ for epoch in range(199 * 20):
         # 得到生成器的损失
         vi_gen_loss_crossentropyloss = loss_fn(vi_disc_gen_out, torch.ones_like(vi_disc_gen_out, device=device))
         # vi_gen_loss_crossentropyloss = torch.mean(
-            # torch.square(gen_output - torch.Tensor(gen_output.shape).uniform_(0.7, 1.2).to(device)))
+        #     torch.square(gen_output - torch.Tensor(gen_output.shape).uniform_(0.7, 1.2).to(device)))
 
-        front = torch.mean(torch.square(gen_output - vi ))
-        back = torch.mean(torch.square(gradient(gen_output) - gradient(ir) - gradient(vi)))
+        # front = torch.mean(torch.square(gen_output - vi ))
+        # back = torch.mean(torch.square(gradient(gen_output) - gradient(ir) - gradient(vi)))
         # original
         # front = torch.mean(torch.square(gen_output - ir))
         # back = torch.mean(torch.square(gradient(gen_output) - gradient(vi)))
+        front = torch.mean(torch.square(gen_output - 0.5 * vi - 0.5 * ir))
+        back = torch.mean(torch.square(gradient(gen_output) - 0.5 * gradient(ir) - 0.5 * gradient(vi)))
 
         vi_gen_l1_loss = front + epsilon * back
 
